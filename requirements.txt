@@ -1,0 +1,15 @@
+# Core (required)
+streamlit==1.32.0
+numpy==1.26.4
+nltk==3.8.1
+spacy==3.7.4
+transformers==4.38.0
+torch==2.2.0
+sentence-transformers==2.5.1
+keybert==0.8.4
+lexicalrichness==0.5.1
+textstat==0.7.3
+
+# Optional: Better performance / compatibility
+accelerate>=0.25.0
+tokenizers>=0.15.0
