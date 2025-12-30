@@ -40,9 +40,9 @@ def load_models():
         # 1. SpaCy for syntactic analysis
         try:
             models['spacy'] = spacy.load("en_core_web_sm")
-        except:
-            import subprocess
-            subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+        except OSError:
+            from spacy.cli import download
+            download("en_core_web_sm")
             models['spacy'] = spacy.load("en_core_web_sm")
         
         # 2. Sentence transformers for semantic similarity
@@ -55,12 +55,13 @@ def load_models():
         try:
             models['paraphraser'] = pipeline(
                 "text2text-generation",
-                model="Vamsi/T5_Paraphrase_Paws",
-                tokenizer="Vamsi/T5_Paraphrase_Paws"
+                model="tuner007/pegasus_paraphrase",  # Reliable & high-quality
+                device=0 if torch.cuda.is_available() else -1
             )
-        except:
+            st.success("Advanced paraphraser loaded!")
+        except Exception as e:
+            st.warning("Transformer paraphraser unavailable. Using synonym + structure methods.")
             models['paraphraser'] = None
-            st.warning("Paraphrase model not available. Using fallback methods.")
         
         # 5. Download NLTK data
         nltk.download('punkt', quiet=True)
@@ -699,4 +700,5 @@ def main():
         """)
 
 if __name__ == "__main__":
+
     main()
