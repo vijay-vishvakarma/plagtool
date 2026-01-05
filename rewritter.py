@@ -31,27 +31,25 @@ class ParaphraseConfig:
 
 @st.cache_resource
 def load_models():
-    with st.spinner("Loading models..."):
-        # Create writable NLTK data directory
+    with st.spinner("Loading models and data..."):
+        # NLTK: Download to writable directory
         nltk_data_dir = "/home/appuser/.nltk_data"
         os.makedirs(nltk_data_dir, exist_ok=True)
-        
-        # Append to NLTK search path (do this early!)
         if nltk_data_dir not in nltk.data.path:
             nltk.data.path.append(nltk_data_dir)
         
-        # Download required data to the writable dir (quietly)
         nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
         nltk.download('wordnet', download_dir=nltk_data_dir, quiet=True)
         nltk.download('averaged_perceptron_tagger', download_dir=nltk_data_dir, quiet=True)
-        # Add any others you need, e.g., 'stopwords'
         
-        # Now load your other models...
+        # SpaCy: Now safe to load (pre-installed)
         models['spacy'] = spacy.load("en_core_web_sm")
+        
+        # Other models...
         models['sentence_transformer'] = SentenceTransformer('all-mpnet-base-v2')
         models['keybert'] = KeyBERT()
     
-    st.success("Models and NLTK data loaded successfully!")
+    st.success("All models loaded!")
     return models
 
 # ------------------- Core Paraphrasing Engine -------------------
@@ -271,5 +269,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
