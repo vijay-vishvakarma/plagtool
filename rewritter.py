@@ -33,21 +33,16 @@ def load_models():
     models = {}
     
     with st.spinner("Loading models..."):
-        # 1. SpaCy
-        try:
-            models['spacy'] = spacy.load("en_core_web_sm")
-        except OSError:
-            from spacy.cli import download
-            download("en_core_web_sm")
-            models['spacy'] = spacy.load("en_core_web_sm")
+        # 1. SpaCy – now pre-installed via requirements.txt
+        models['spacy'] = spacy.load("en_core_web_sm")
         
-        # 2. Sentence Transformer (semantic similarity)
+        # 2. Sentence Transformer
         models['sentence_transformer'] = SentenceTransformer('all-mpnet-base-v2')
         
         # 3. KeyBERT
         models['keybert'] = KeyBERT()
         
-        # 4. NLTK data
+        # 4. NLTK data (still needed at runtime – this is safe)
         nltk.download('punkt', quiet=True)
         nltk.download('wordnet', quiet=True)
         nltk.download('averaged_perceptron_tagger', quiet=True)
@@ -272,3 +267,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
