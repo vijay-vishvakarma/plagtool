@@ -1,3 +1,5 @@
+import os
+import nltk
 import streamlit as st
 import numpy as np
 from typing import List, Dict
@@ -29,25 +31,27 @@ class ParaphraseConfig:
 
 @st.cache_resource
 def load_models():
-    """Load all NLP models with progress tracking"""
-    models = {}
-    
     with st.spinner("Loading models..."):
-        # 1. SpaCy – now pre-installed via requirements.txt
+        # Create writable NLTK data directory
+        nltk_data_dir = "/home/appuser/.nltk_data"
+        os.makedirs(nltk_data_dir, exist_ok=True)
+        
+        # Append to NLTK search path (do this early!)
+        if nltk_data_dir not in nltk.data.path:
+            nltk.data.path.append(nltk_data_dir)
+        
+        # Download required data to the writable dir (quietly)
+        nltk.download('punkt', download_dir=nltk_data_dir, quiet=True)
+        nltk.download('wordnet', download_dir=nltk_data_dir, quiet=True)
+        nltk.download('averaged_perceptron_tagger', download_dir=nltk_data_dir, quiet=True)
+        # Add any others you need, e.g., 'stopwords'
+        
+        # Now load your other models...
         models['spacy'] = spacy.load("en_core_web_sm")
-        
-        # 2. Sentence Transformer
         models['sentence_transformer'] = SentenceTransformer('all-mpnet-base-v2')
-        
-        # 3. KeyBERT
         models['keybert'] = KeyBERT()
-        
-        # 4. NLTK data (still needed at runtime – this is safe)
-        nltk.download('punkt', quiet=True)
-        nltk.download('wordnet', quiet=True)
-        nltk.download('averaged_perceptron_tagger', quiet=True)
     
-    st.success("Models loaded successfully!")
+    st.success("Models and NLTK data loaded successfully!")
     return models
 
 # ------------------- Core Paraphrasing Engine -------------------
@@ -267,4 +271,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
