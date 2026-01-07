@@ -4,13 +4,9 @@ import random
 import re
 from dataclasses import dataclass
 
-try:
-    import spacy
-    from lexicalrichness import LexicalRichness
-    import textstat
-except ImportError as e:
-    st.error(f"Missing library: {e}. Install with: pip install spacy lexicalrichness textstat")
-    st.stop()
+import spacy
+from lexicalrichness import LexicalRichness
+import textstat
 
 @dataclass
 class ParaphraseConfig:
@@ -79,7 +75,6 @@ class LightParaphraser:
                 new_word = random.choice(self.synonyms[word])
                 if token.text[0].isupper():
                     new_word = new_word.capitalize()
-                # Preserve trailing whitespace/punctuation
                 suffix = token.text[len(token.text.lstrip(".,!?;:")):]
                 new_tokens.append(new_word + suffix + token.whitespace_)
                 replaced += 1
@@ -109,7 +104,7 @@ class LightParaphraser:
         return sentence
 
     def add_tone(self, sentence: str) -> str:
-        if random.random() < 0.3 and len(sentence.split()) > 8:  # ← Fixed: added missing colon
+        if random.random() < 0.3 and len(sentence.split()) > 8:
             connector = random.choice(self.connectors)
             return f"{connector} {sentence}"
         return sentence
@@ -129,7 +124,6 @@ class LightParaphraser:
         if config.academic_tone:
             s = self.add_tone(s)
         
-        # Ensure proper capitalization
         if s and s[0].islower():
             s = s[0].upper() + s[1:]
         return s
@@ -164,7 +158,7 @@ def main():
     st.set_page_config(page_title="Ultra-Light Anti-Plagiarism Rewriter", page_icon="🛡️", layout="wide")
     
     st.title("🛡️ Ultra-Light Anti-Plagiarism Rewriter")
-    st.markdown("Fast, rule-based rewriting to help avoid plagiarism detection.")
+    st.markdown("Fast, rule-based rewriting using synonyms, voice change, and structural templates.")
 
     with st.sidebar:
         st.header("⚙️ Settings")
@@ -201,11 +195,11 @@ def main():
             st.success(f"✅ Word change: **{result['word_change_pct']}%** | Risk: **{result['plagiarism_risk']}**")
             
             if result["word_change_pct"] < 40:
-                st.info("💡 Try increasing intensity or enabling more options for stronger rewriting.")
+                st.info("💡 Increase intensity or enable more options for stronger changes.")
         else:
             st.warning("Please enter some text first.")
 
-    st.caption("Best practice: Always review and edit the output manually.")
+    st.caption("Always review and cite sources properly. This tool helps rephrase — not replace original thinking.")
 
 if __name__ == "__main__":
     main()
