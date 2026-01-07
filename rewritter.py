@@ -44,10 +44,6 @@ def load_models():
         # SpaCy: Now safe to load (pre-installed)
         models['spacy'] = spacy.load("en_core_web_sm")
         
-        # Other models...
-        models['sentence_transformer'] = SentenceTransformer('all-mpnet-base-v2')
-        models['keybert'] = KeyBERT()
-    
     st.success("All models loaded!")
     return models
 
@@ -268,6 +264,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
