@@ -1,9 +1,10 @@
+import spacy
+import subprocess
+import sys
 import streamlit as st
 import random
 import re
 from dataclasses import dataclass
-
-import spacy
 import textstat
 
 @dataclass
@@ -15,15 +16,14 @@ class ParaphraseConfig:
 
 @st.cache_resource
 def load_models():
-    with st.spinner("Loading model..."):
-        try:
-            nlp = spacy.load("en_core_web_sm")
-        except OSError:
-            st.info("Downloading language model... This is a one-time setup.")
-            import os
-            os.system("python -m spacy download en_core_web_sm")
-            nlp = spacy.load("en_core_web_sm")
-    st.success("Ready!")
+    try:
+        nlp = spacy.load("en_core_web_sm")
+    except OSError:
+        st.info("Downloading language model... This may take a minute.")
+        subprocess.check_call([
+            sys.executable, "-m", "spacy", "download", "en_core_web_sm"
+        ])
+        nlp = spacy.load("en_core_web_sm")
     return nlp
 
 class LightParaphraser:
@@ -161,4 +161,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
