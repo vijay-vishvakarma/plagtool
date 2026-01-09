@@ -16,7 +16,13 @@ class ParaphraseConfig:
 @st.cache_resource
 def load_models():
     with st.spinner("Loading model..."):
-        nlp = spacy.load("en_core_web_sm")
+        try:
+            nlp = spacy.load("en_core_web_sm")
+        except OSError:
+            st.info("Downloading language model... This is a one-time setup.")
+            import os
+            os.system("python -m spacy download en_core_web_sm")
+            nlp = spacy.load("en_core_web_sm")
     st.success("Ready!")
     return nlp
 
@@ -155,3 +161,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
